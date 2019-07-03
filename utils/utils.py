@@ -46,7 +46,7 @@ def process_video(args, net, classes):
         
         # Show frame
         cv.imshow("video", frame)
-        cv.waitKey(0)
+        cv.waitKey(1)
 
         # Save video 
         save_cap.write(frame)
@@ -86,6 +86,9 @@ def process_img(args, net, img, classes):
         output = net(Variable(img, volatile = True), torch.cuda.is_available())
     output = __write_results(output, args.confThreshold, num_classes=80, nms_conf = args.nmsThreshold)
 
+    if type(output) == int:
+        return [], []
+        
     im_dim = im_dim.repeat(output.size(0), 1)
     scaling_factor = torch.min(416/im_dim,1)[0].view(-1,1)
     
