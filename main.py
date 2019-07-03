@@ -2,6 +2,7 @@ import argparse
 import cv2 as cv
 from utils import model
 from utils import utils
+from utils import rtmplive
 import time
 
 def getargs():
@@ -73,6 +74,11 @@ def getargs():
         type = int,
         help = "http server's port"
     )
+    parser.add_argument(
+        '--rtmpurl',
+        type = str,
+        help = "rtmp url"
+    )
 
     args = parser.parse_args()
     return args
@@ -85,7 +91,9 @@ if __name__ == '__main__':
     if args.image:
         image = cv.imread(args.image)
         utils.process_img(args, net, image, classes)
-    elif args.video:
+    elif args.video and not args.rtmpurl:
         utils.process_video(args, net, classes)
     elif args.run_http:
         utils.run_http(args, net, classes)
+    elif args.rtmpurl and args.video:
+        rtmplive.live(args, net, classes)
